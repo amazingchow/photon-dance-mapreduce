@@ -5,12 +5,24 @@ package amazingchow.mapreduce;
 
 import "google/api/annotations.proto";
 
-message Task { repeated string inputs = 1; }
-
 enum WorkerStatus {
   WORKER_STATUS_ALIVE = 0;
   WORKER_STATUS_UNHEALTHY = 1;
 }
+
+enum TaskType {
+  TASK_TYPE_MAP = 0;
+  TASK_TYPE_REDUCE = 1;
+}
+
+enum IntercomType {
+  INTERCOM_TYPE_ASK_TASK = 0;
+  INTERCOM_TYPE_FINISH_MAP_TASK = 1;
+  INTERCOM_TYPE_FINISH_REDUCE_TASK = 2;
+  INTERCOM_TYPE_SEND_INTER_FILE = 3;
+}
+
+message Task { repeated string inputs = 1; }
 
 message Worker {
   string id = 2;
@@ -26,8 +38,23 @@ message ListWorkersRequest {}
 
 message ListWorkersResponse { repeated Worker workers = 1; }
 
+message IntercomRequest {
+  IntercomType MsgType = 1;
+  string MsgContent = 2;
+  string Extra = 3;
+}
+
+message IntercomResponse {
+  TaskType TaskType = 1;
+  string File = 2;
+  int32 NReduce = 3;
+  int32 MapTaskAllocated = 4;
+  int32 ReduceTaskAllocated = 5;
+  repeated string ReduceFiles = 6;
+}
+
 /* ---------- grpc gateway ---------- */
-service ManagerService {
+service MapReduceRPCService {
   rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {
     option (google.api.http) = {
       post : "/v1/task"
@@ -40,4 +67,6 @@ service ManagerService {
       get : "/v1/workers"
     };
   }
+
+  rpc Intercom(IntercomRequest) returns (IntercomResponse) {}
 }

@@ -47,6 +47,10 @@ func (mris *MapReduceIngressServer) ListWorkers(ctx context.Context, req *pbapi.
 	return &pbapi.ListWorkersResponse{}, nil
 }
 
+func (mris *MapReduceIngressServer) Intercom(ctx context.Context, req *pbapi.IntercomRequest) (*pbapi.IntercomResponse, error) {
+	return &pbapi.IntercomResponse{}, nil
+}
+
 func serverGrpcService(ctx context.Context, mris *MapReduceIngressServer, conf *master.ServiceConfig, stopGroup *sync.WaitGroup, stopCh chan struct{}) {
 	stopGroup.Add(1)
 	defer stopGroup.Done()
@@ -62,7 +66,7 @@ func serverGrpcService(ctx context.Context, mris *MapReduceIngressServer, conf *
 	}
 	grpcServer := grpc.NewServer(opts...)
 
-	pbapi.RegisterManagerServiceServer(grpcServer, mris)
+	pbapi.RegisterMapReduceRPCServiceServer(grpcServer, mris)
 	log.Info().Msgf("grpc is listening at %s", conf.GRPCEndpoint)
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
@@ -98,7 +102,7 @@ func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, config
 	dialOpts := []grpc.DialOption{
 		grpc.WithInsecure(),
 	}
-	if err := pbapi.RegisterManagerServiceHandlerFromEndpoint(ctx, mux, config.GRPCEndpoint, dialOpts); err != nil {
+	if err := pbapi.RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx, mux, config.GRPCEndpoint, dialOpts); err != nil {
 		log.Fatal().Err(err).Msg("failed to register grpc gateway")
 	}
 

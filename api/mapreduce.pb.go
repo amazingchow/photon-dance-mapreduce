@@ -50,6 +50,62 @@ func (WorkerStatus) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_e5cf3aee7a1e5ec0, []int{0}
 }
 
+type TaskType int32
+
+const (
+	TaskType_TASK_TYPE_MAP    TaskType = 0
+	TaskType_TASK_TYPE_REDUCE TaskType = 1
+)
+
+var TaskType_name = map[int32]string{
+	0: "TASK_TYPE_MAP",
+	1: "TASK_TYPE_REDUCE",
+}
+
+var TaskType_value = map[string]int32{
+	"TASK_TYPE_MAP":    0,
+	"TASK_TYPE_REDUCE": 1,
+}
+
+func (x TaskType) String() string {
+	return proto.EnumName(TaskType_name, int32(x))
+}
+
+func (TaskType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_e5cf3aee7a1e5ec0, []int{1}
+}
+
+type IntercomType int32
+
+const (
+	IntercomType_INTERCOM_TYPE_ASK_TASK           IntercomType = 0
+	IntercomType_INTERCOM_TYPE_FINISH_MAP_TASK    IntercomType = 1
+	IntercomType_INTERCOM_TYPE_FINISH_REDUCE_TASK IntercomType = 2
+	IntercomType_INTERCOM_TYPE_SEND_INTER_FILE    IntercomType = 3
+)
+
+var IntercomType_name = map[int32]string{
+	0: "INTERCOM_TYPE_ASK_TASK",
+	1: "INTERCOM_TYPE_FINISH_MAP_TASK",
+	2: "INTERCOM_TYPE_FINISH_REDUCE_TASK",
+	3: "INTERCOM_TYPE_SEND_INTER_FILE",
+}
+
+var IntercomType_value = map[string]int32{
+	"INTERCOM_TYPE_ASK_TASK":           0,
+	"INTERCOM_TYPE_FINISH_MAP_TASK":    1,
+	"INTERCOM_TYPE_FINISH_REDUCE_TASK": 2,
+	"INTERCOM_TYPE_SEND_INTER_FILE":    3,
+}
+
+func (x IntercomType) String() string {
+	return proto.EnumName(IntercomType_name, int32(x))
+}
+
+func (IntercomType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_e5cf3aee7a1e5ec0, []int{2}
+}
+
 type Task struct {
 	Inputs               []string `protobuf:"bytes,1,rep,name=inputs,proto3" json:"inputs,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -277,14 +333,152 @@ func (m *ListWorkersResponse) GetWorkers() []*Worker {
 	return nil
 }
 
+type IntercomRequest struct {
+	MsgType              IntercomType `protobuf:"varint,1,opt,name=MsgType,proto3,enum=amazingchow.mapreduce.IntercomType" json:"MsgType,omitempty"`
+	MsgContent           string       `protobuf:"bytes,2,opt,name=MsgContent,proto3" json:"MsgContent,omitempty"`
+	Extra                string       `protobuf:"bytes,3,opt,name=Extra,proto3" json:"Extra,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *IntercomRequest) Reset()         { *m = IntercomRequest{} }
+func (m *IntercomRequest) String() string { return proto.CompactTextString(m) }
+func (*IntercomRequest) ProtoMessage()    {}
+func (*IntercomRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e5cf3aee7a1e5ec0, []int{6}
+}
+
+func (m *IntercomRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IntercomRequest.Unmarshal(m, b)
+}
+func (m *IntercomRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IntercomRequest.Marshal(b, m, deterministic)
+}
+func (m *IntercomRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IntercomRequest.Merge(m, src)
+}
+func (m *IntercomRequest) XXX_Size() int {
+	return xxx_messageInfo_IntercomRequest.Size(m)
+}
+func (m *IntercomRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IntercomRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IntercomRequest proto.InternalMessageInfo
+
+func (m *IntercomRequest) GetMsgType() IntercomType {
+	if m != nil {
+		return m.MsgType
+	}
+	return IntercomType_INTERCOM_TYPE_ASK_TASK
+}
+
+func (m *IntercomRequest) GetMsgContent() string {
+	if m != nil {
+		return m.MsgContent
+	}
+	return ""
+}
+
+func (m *IntercomRequest) GetExtra() string {
+	if m != nil {
+		return m.Extra
+	}
+	return ""
+}
+
+type IntercomResponse struct {
+	TaskType             TaskType `protobuf:"varint,1,opt,name=TaskType,proto3,enum=amazingchow.mapreduce.TaskType" json:"TaskType,omitempty"`
+	File                 string   `protobuf:"bytes,2,opt,name=File,proto3" json:"File,omitempty"`
+	NReduce              int32    `protobuf:"varint,3,opt,name=NReduce,proto3" json:"NReduce,omitempty"`
+	MapTaskAllocated     int32    `protobuf:"varint,4,opt,name=MapTaskAllocated,proto3" json:"MapTaskAllocated,omitempty"`
+	ReduceTaskAllocated  int32    `protobuf:"varint,5,opt,name=ReduceTaskAllocated,proto3" json:"ReduceTaskAllocated,omitempty"`
+	ReduceFiles          []string `protobuf:"bytes,6,rep,name=ReduceFiles,proto3" json:"ReduceFiles,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IntercomResponse) Reset()         { *m = IntercomResponse{} }
+func (m *IntercomResponse) String() string { return proto.CompactTextString(m) }
+func (*IntercomResponse) ProtoMessage()    {}
+func (*IntercomResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e5cf3aee7a1e5ec0, []int{7}
+}
+
+func (m *IntercomResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IntercomResponse.Unmarshal(m, b)
+}
+func (m *IntercomResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IntercomResponse.Marshal(b, m, deterministic)
+}
+func (m *IntercomResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IntercomResponse.Merge(m, src)
+}
+func (m *IntercomResponse) XXX_Size() int {
+	return xxx_messageInfo_IntercomResponse.Size(m)
+}
+func (m *IntercomResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_IntercomResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IntercomResponse proto.InternalMessageInfo
+
+func (m *IntercomResponse) GetTaskType() TaskType {
+	if m != nil {
+		return m.TaskType
+	}
+	return TaskType_TASK_TYPE_MAP
+}
+
+func (m *IntercomResponse) GetFile() string {
+	if m != nil {
+		return m.File
+	}
+	return ""
+}
+
+func (m *IntercomResponse) GetNReduce() int32 {
+	if m != nil {
+		return m.NReduce
+	}
+	return 0
+}
+
+func (m *IntercomResponse) GetMapTaskAllocated() int32 {
+	if m != nil {
+		return m.MapTaskAllocated
+	}
+	return 0
+}
+
+func (m *IntercomResponse) GetReduceTaskAllocated() int32 {
+	if m != nil {
+		return m.ReduceTaskAllocated
+	}
+	return 0
+}
+
+func (m *IntercomResponse) GetReduceFiles() []string {
+	if m != nil {
+		return m.ReduceFiles
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("amazingchow.mapreduce.WorkerStatus", WorkerStatus_name, WorkerStatus_value)
+	proto.RegisterEnum("amazingchow.mapreduce.TaskType", TaskType_name, TaskType_value)
+	proto.RegisterEnum("amazingchow.mapreduce.IntercomType", IntercomType_name, IntercomType_value)
 	proto.RegisterType((*Task)(nil), "amazingchow.mapreduce.Task")
 	proto.RegisterType((*Worker)(nil), "amazingchow.mapreduce.Worker")
 	proto.RegisterType((*AddTaskRequest)(nil), "amazingchow.mapreduce.AddTaskRequest")
 	proto.RegisterType((*AddTaskResponse)(nil), "amazingchow.mapreduce.AddTaskResponse")
 	proto.RegisterType((*ListWorkersRequest)(nil), "amazingchow.mapreduce.ListWorkersRequest")
 	proto.RegisterType((*ListWorkersResponse)(nil), "amazingchow.mapreduce.ListWorkersResponse")
+	proto.RegisterType((*IntercomRequest)(nil), "amazingchow.mapreduce.IntercomRequest")
+	proto.RegisterType((*IntercomResponse)(nil), "amazingchow.mapreduce.IntercomResponse")
 }
 
 func init() {
@@ -292,33 +486,50 @@ func init() {
 }
 
 var fileDescriptor_e5cf3aee7a1e5ec0 = []byte{
-	// 403 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x52, 0xcd, 0xae, 0x93, 0x40,
-	0x14, 0x76, 0xf0, 0xca, 0xf5, 0x1e, 0x14, 0xeb, 0x54, 0x2d, 0xb6, 0x6a, 0x08, 0x46, 0x83, 0x5d,
-	0x40, 0xc4, 0x85, 0x89, 0xae, 0x30, 0x36, 0xa9, 0xb1, 0xd6, 0x04, 0xa8, 0x8d, 0x6e, 0x9a, 0x69,
-	0x99, 0xe0, 0xa4, 0x96, 0x41, 0x66, 0x68, 0xa3, 0x4b, 0x5f, 0xc1, 0x47, 0xf3, 0x15, 0x7c, 0x0a,
-	0x57, 0xa6, 0x80, 0xb5, 0xc4, 0x56, 0x5d, 0xce, 0x39, 0xdf, 0xcf, 0x7c, 0x5f, 0x0e, 0xd8, 0x64,
-	0x45, 0x3e, 0xb3, 0x34, 0x59, 0xbc, 0xe7, 0x1b, 0x77, 0x45, 0xb2, 0x9c, 0xc6, 0xc5, 0x82, 0xba,
-	0xd9, 0xfc, 0xf7, 0xc3, 0xc9, 0x72, 0x2e, 0x39, 0xbe, 0xbe, 0x87, 0x74, 0x76, 0xcb, 0xee, 0xad,
-	0x84, 0xf3, 0xe4, 0x03, 0x75, 0x49, 0xc6, 0x5c, 0x92, 0xa6, 0x5c, 0x12, 0xc9, 0x78, 0x2a, 0x2a,
-	0x92, 0x75, 0x07, 0x4e, 0x22, 0x22, 0x96, 0xf8, 0x06, 0xa8, 0x2c, 0xcd, 0x0a, 0x29, 0x0c, 0x64,
-	0x9e, 0xb7, 0xcf, 0x82, 0xfa, 0x65, 0x4d, 0x40, 0x9d, 0xf2, 0x7c, 0x49, 0x73, 0xac, 0x83, 0xc2,
-	0x62, 0x43, 0x31, 0x91, 0x7d, 0x16, 0x28, 0x2c, 0xc6, 0x4f, 0x41, 0x15, 0x92, 0xc8, 0x42, 0x18,
-	0x17, 0x4c, 0x64, 0xeb, 0xde, 0x5d, 0xe7, 0xa0, 0xbf, 0x53, 0xd1, 0xc3, 0x12, 0x1a, 0xd4, 0x14,
-	0xcb, 0x07, 0xdd, 0x8f, 0xe3, 0xad, 0x73, 0x40, 0x3f, 0x16, 0x54, 0x48, 0xec, 0xc2, 0x89, 0x24,
-	0x62, 0x69, 0x20, 0x13, 0xd9, 0x9a, 0xd7, 0x3b, 0x22, 0x56, 0x32, 0x4a, 0xa0, 0x75, 0x15, 0xae,
-	0xec, 0x24, 0x44, 0xc6, 0x53, 0x41, 0xad, 0x6b, 0x80, 0x47, 0x4c, 0xc8, 0xca, 0x51, 0xd4, 0xca,
-	0xd6, 0x18, 0xda, 0x8d, 0x69, 0x05, 0xc6, 0x8f, 0xe1, 0x74, 0x53, 0x8d, 0xca, 0xc8, 0x9a, 0x77,
-	0xfb, 0xaf, 0x01, 0x82, 0x5f, 0xe8, 0xfe, 0x73, 0xb8, 0xb4, 0x9f, 0x09, 0x77, 0xa0, 0x3d, 0x7d,
-	0x1d, 0xbc, 0x1c, 0x04, 0xb3, 0x30, 0xf2, 0xa3, 0x49, 0x38, 0xf3, 0x47, 0x2f, 0xde, 0x0c, 0x5a,
-	0xe7, 0x70, 0x0f, 0x3a, 0xcd, 0xc5, 0x64, 0x3c, 0x1c, 0xf8, 0xa3, 0x68, 0xf8, 0xb6, 0x85, 0xbc,
-	0x1f, 0x08, 0xf4, 0x57, 0x24, 0x25, 0x09, 0xcd, 0x43, 0x9a, 0xaf, 0xd9, 0x82, 0xe2, 0x15, 0x9c,
-	0xd6, 0x89, 0xf0, 0xbd, 0x23, 0x7f, 0x69, 0x96, 0xd6, 0xbd, 0xff, 0x2f, 0x58, 0x5d, 0x4c, 0xfb,
-	0xcb, 0xb7, 0xef, 0x5f, 0x95, 0xcb, 0xd6, 0x45, 0x77, 0xfd, 0xd0, 0xdd, 0xb6, 0xf7, 0x04, 0xf5,
-	0xf1, 0x27, 0xd0, 0xf6, 0x7a, 0xc1, 0x0f, 0x8e, 0x68, 0xfd, 0xd9, 0x68, 0xb7, 0xff, 0x3f, 0xd0,
-	0xa6, 0x35, 0xd6, 0xb6, 0xd6, 0x75, 0x85, 0xcf, 0x7a, 0xef, 0x6e, 0x1e, 0x3e, 0x6b, 0x92, 0xb1,
-	0xb9, 0x5a, 0x5e, 0xe6, 0xa3, 0x9f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x8a, 0x52, 0xf7, 0x29, 0xfa,
-	0x02, 0x00, 0x00,
+	// 676 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x4f, 0x6f, 0xda, 0x4e,
+	0x10, 0xc5, 0x84, 0x3f, 0xc9, 0x90, 0x3f, 0xce, 0x90, 0x5f, 0xe2, 0x1f, 0x69, 0x52, 0xea, 0xb6,
+	0x29, 0xe5, 0x00, 0x2d, 0x39, 0x54, 0x6a, 0xd4, 0x83, 0x4b, 0x1c, 0x05, 0x05, 0x48, 0x64, 0x9b,
+	0x46, 0xa9, 0x54, 0xa1, 0x0d, 0xac, 0xa8, 0x15, 0xb0, 0x5d, 0x76, 0x49, 0x9a, 0x1e, 0x7b, 0xe8,
+	0x17, 0xa8, 0xd4, 0x2f, 0xd6, 0x7b, 0x4f, 0xfd, 0x1a, 0x95, 0x2a, 0xaf, 0x4d, 0x00, 0x05, 0x92,
+	0xde, 0xbc, 0x33, 0xef, 0xcd, 0x9b, 0x19, 0xef, 0x5b, 0xc8, 0x91, 0x1e, 0xf9, 0x62, 0x3b, 0x9d,
+	0xd6, 0x47, 0xf7, 0xaa, 0xd8, 0x23, 0x5e, 0x9f, 0xb6, 0x07, 0x2d, 0x5a, 0xf4, 0xce, 0x47, 0x87,
+	0x82, 0xd7, 0x77, 0xb9, 0x8b, 0xff, 0x8d, 0x21, 0x0b, 0x37, 0xc9, 0xcc, 0x83, 0x8e, 0xeb, 0x76,
+	0xba, 0xb4, 0x48, 0x3c, 0xbb, 0x48, 0x1c, 0xc7, 0xe5, 0x84, 0xdb, 0xae, 0xc3, 0x02, 0x92, 0xba,
+	0x0d, 0x31, 0x8b, 0xb0, 0x0b, 0x5c, 0x87, 0x84, 0xed, 0x78, 0x03, 0xce, 0x14, 0x29, 0x3b, 0x97,
+	0x5b, 0x30, 0xc2, 0x93, 0xda, 0x80, 0xc4, 0xa9, 0xdb, 0xbf, 0xa0, 0x7d, 0x5c, 0x86, 0xa8, 0xdd,
+	0x56, 0xa2, 0x59, 0x29, 0xb7, 0x60, 0x44, 0xed, 0x36, 0xee, 0x41, 0x82, 0x71, 0xc2, 0x07, 0x4c,
+	0x89, 0x67, 0xa5, 0xdc, 0x72, 0xe9, 0x71, 0x61, 0xaa, 0x7e, 0x21, 0xa0, 0x9b, 0x02, 0x6a, 0x84,
+	0x14, 0x55, 0x83, 0x65, 0xad, 0xdd, 0xf6, 0x95, 0x0d, 0xfa, 0x69, 0x40, 0x19, 0xc7, 0x22, 0xc4,
+	0x38, 0x61, 0x17, 0x8a, 0x94, 0x95, 0x72, 0xa9, 0xd2, 0xe6, 0x8c, 0x62, 0x82, 0x21, 0x80, 0xea,
+	0x2a, 0xac, 0xdc, 0x94, 0x60, 0x9e, 0xeb, 0x30, 0xaa, 0xae, 0x01, 0x56, 0x6d, 0xc6, 0x03, 0x45,
+	0x16, 0x56, 0x56, 0xeb, 0x90, 0x9e, 0x88, 0x06, 0x60, 0x7c, 0x05, 0xc9, 0xab, 0x20, 0x24, 0x46,
+	0x4e, 0x95, 0xb6, 0xee, 0x1c, 0xc0, 0x18, 0xa2, 0xd5, 0x6f, 0x12, 0xac, 0x54, 0x1c, 0x4e, 0xfb,
+	0x2d, 0xb7, 0x37, 0xec, 0xfe, 0x0d, 0x24, 0x6b, 0xac, 0x63, 0x5d, 0x7b, 0x54, 0x0c, 0x30, 0x7b,
+	0x1b, 0x43, 0xa2, 0x0f, 0x35, 0x86, 0x1c, 0xdc, 0x06, 0xa8, 0xb1, 0x4e, 0xd9, 0x75, 0x38, 0x75,
+	0x78, 0xb8, 0xe3, 0xb1, 0x08, 0xae, 0x41, 0x5c, 0xff, 0xcc, 0xfb, 0x44, 0x99, 0x13, 0xa9, 0xe0,
+	0xa0, 0xfe, 0x91, 0x40, 0x1e, 0x35, 0x12, 0x8e, 0xb5, 0x07, 0xf3, 0xfe, 0x4e, 0xc6, 0x5a, 0x79,
+	0x78, 0xc7, 0x2e, 0x45, 0x1b, 0x37, 0x04, 0x44, 0x88, 0x1d, 0xd8, 0x5d, 0x1a, 0x76, 0x20, 0xbe,
+	0x51, 0x81, 0x64, 0xdd, 0x10, 0x0c, 0xa1, 0x1e, 0x37, 0x86, 0x47, 0xcc, 0x83, 0x5c, 0x23, 0x9e,
+	0x4f, 0xd6, 0xba, 0x5d, 0xb7, 0x45, 0x38, 0x6d, 0x2b, 0x31, 0x01, 0xb9, 0x15, 0xc7, 0x17, 0x90,
+	0x0e, 0x58, 0x93, 0xf0, 0xb8, 0x80, 0x4f, 0x4b, 0x61, 0x16, 0x52, 0x41, 0xd8, 0xef, 0x82, 0x29,
+	0x09, 0x71, 0x2d, 0xc7, 0x43, 0xf9, 0x7d, 0x58, 0x1c, 0xbf, 0x5c, 0xb8, 0x01, 0xe9, 0xd3, 0x63,
+	0xe3, 0x48, 0x37, 0x9a, 0xa6, 0xa5, 0x59, 0x0d, 0xb3, 0xa9, 0x55, 0x2b, 0xef, 0x74, 0x39, 0x82,
+	0x9b, 0xb0, 0x31, 0x99, 0x68, 0xd4, 0x0f, 0x75, 0xad, 0x6a, 0x1d, 0x9e, 0xc9, 0x52, 0x7e, 0x77,
+	0xb4, 0x30, 0x5c, 0x85, 0x25, 0x4b, 0x33, 0x8f, 0x9a, 0xd6, 0xd9, 0x89, 0xde, 0xac, 0x69, 0x27,
+	0x72, 0x04, 0xd7, 0x40, 0x1e, 0x85, 0x0c, 0x7d, 0xbf, 0x51, 0xd6, 0x65, 0x29, 0xff, 0x43, 0x82,
+	0xc5, 0xf1, 0x5f, 0x89, 0x19, 0x58, 0xaf, 0xd4, 0x2d, 0xdd, 0x28, 0x1f, 0xd7, 0x02, 0xa8, 0xe0,
+	0x68, 0xe6, 0x91, 0x1c, 0xc1, 0x47, 0xb0, 0x35, 0x99, 0x3b, 0xa8, 0xd4, 0x2b, 0xe6, 0xa1, 0x2f,
+	0x10, 0x40, 0x24, 0x7c, 0x02, 0xd9, 0xa9, 0x90, 0x40, 0x30, 0x40, 0x45, 0x6f, 0x17, 0x32, 0xf5,
+	0xfa, 0x7e, 0x53, 0x84, 0x9a, 0x07, 0x95, 0xaa, 0x2e, 0xcf, 0x95, 0x7e, 0x45, 0x21, 0x5d, 0x23,
+	0x5e, 0xb0, 0x26, 0xe3, 0xa4, 0x6c, 0xd2, 0xfe, 0xa5, 0xdd, 0xa2, 0xd8, 0x83, 0x64, 0xe8, 0x16,
+	0x7c, 0x3a, 0xe3, 0x3e, 0x4c, 0x1a, 0x32, 0xb3, 0x73, 0x1f, 0x2c, 0x34, 0x5d, 0xfa, 0xeb, 0xcf,
+	0xdf, 0xdf, 0xa3, 0x4b, 0xea, 0x7c, 0xf1, 0xf2, 0x65, 0xd1, 0x77, 0xe6, 0x6b, 0x29, 0x8f, 0xd7,
+	0x90, 0x1a, 0xf3, 0x1c, 0x3e, 0x9f, 0x51, 0xeb, 0xb6, 0x5b, 0x33, 0xf9, 0x7f, 0x81, 0x4e, 0x4a,
+	0x63, 0xca, 0x97, 0x0e, 0xed, 0x89, 0x1f, 0x60, 0x7e, 0xf8, 0x67, 0x70, 0xe7, 0x1e, 0x17, 0x0e,
+	0x45, 0x9f, 0xdd, 0x8b, 0x0b, 0x15, 0x23, 0x6f, 0x37, 0xdf, 0xff, 0x3f, 0xfd, 0x45, 0x26, 0x9e,
+	0x7d, 0x9e, 0x10, 0x8f, 0xea, 0xee, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x56, 0x51, 0xf6, 0xba,
+	0xb5, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -329,108 +540,144 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ManagerServiceClient is the client API for ManagerService service.
+// MapReduceRPCServiceClient is the client API for MapReduceRPCService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ManagerServiceClient interface {
+type MapReduceRPCServiceClient interface {
 	AddTask(ctx context.Context, in *AddTaskRequest, opts ...grpc.CallOption) (*AddTaskResponse, error)
 	ListWorkers(ctx context.Context, in *ListWorkersRequest, opts ...grpc.CallOption) (*ListWorkersResponse, error)
+	Intercom(ctx context.Context, in *IntercomRequest, opts ...grpc.CallOption) (*IntercomResponse, error)
 }
 
-type managerServiceClient struct {
+type mapReduceRPCServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewManagerServiceClient(cc *grpc.ClientConn) ManagerServiceClient {
-	return &managerServiceClient{cc}
+func NewMapReduceRPCServiceClient(cc *grpc.ClientConn) MapReduceRPCServiceClient {
+	return &mapReduceRPCServiceClient{cc}
 }
 
-func (c *managerServiceClient) AddTask(ctx context.Context, in *AddTaskRequest, opts ...grpc.CallOption) (*AddTaskResponse, error) {
+func (c *mapReduceRPCServiceClient) AddTask(ctx context.Context, in *AddTaskRequest, opts ...grpc.CallOption) (*AddTaskResponse, error) {
 	out := new(AddTaskResponse)
-	err := c.cc.Invoke(ctx, "/amazingchow.mapreduce.ManagerService/AddTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/amazingchow.mapreduce.MapReduceRPCService/AddTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerServiceClient) ListWorkers(ctx context.Context, in *ListWorkersRequest, opts ...grpc.CallOption) (*ListWorkersResponse, error) {
+func (c *mapReduceRPCServiceClient) ListWorkers(ctx context.Context, in *ListWorkersRequest, opts ...grpc.CallOption) (*ListWorkersResponse, error) {
 	out := new(ListWorkersResponse)
-	err := c.cc.Invoke(ctx, "/amazingchow.mapreduce.ManagerService/ListWorkers", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/amazingchow.mapreduce.MapReduceRPCService/ListWorkers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ManagerServiceServer is the server API for ManagerService service.
-type ManagerServiceServer interface {
+func (c *mapReduceRPCServiceClient) Intercom(ctx context.Context, in *IntercomRequest, opts ...grpc.CallOption) (*IntercomResponse, error) {
+	out := new(IntercomResponse)
+	err := c.cc.Invoke(ctx, "/amazingchow.mapreduce.MapReduceRPCService/Intercom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MapReduceRPCServiceServer is the server API for MapReduceRPCService service.
+type MapReduceRPCServiceServer interface {
 	AddTask(context.Context, *AddTaskRequest) (*AddTaskResponse, error)
 	ListWorkers(context.Context, *ListWorkersRequest) (*ListWorkersResponse, error)
+	Intercom(context.Context, *IntercomRequest) (*IntercomResponse, error)
 }
 
-// UnimplementedManagerServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedManagerServiceServer struct {
+// UnimplementedMapReduceRPCServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedMapReduceRPCServiceServer struct {
 }
 
-func (*UnimplementedManagerServiceServer) AddTask(ctx context.Context, req *AddTaskRequest) (*AddTaskResponse, error) {
+func (*UnimplementedMapReduceRPCServiceServer) AddTask(ctx context.Context, req *AddTaskRequest) (*AddTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTask not implemented")
 }
-func (*UnimplementedManagerServiceServer) ListWorkers(ctx context.Context, req *ListWorkersRequest) (*ListWorkersResponse, error) {
+func (*UnimplementedMapReduceRPCServiceServer) ListWorkers(ctx context.Context, req *ListWorkersRequest) (*ListWorkersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListWorkers not implemented")
 }
-
-func RegisterManagerServiceServer(s *grpc.Server, srv ManagerServiceServer) {
-	s.RegisterService(&_ManagerService_serviceDesc, srv)
+func (*UnimplementedMapReduceRPCServiceServer) Intercom(ctx context.Context, req *IntercomRequest) (*IntercomResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Intercom not implemented")
 }
 
-func _ManagerService_AddTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func RegisterMapReduceRPCServiceServer(s *grpc.Server, srv MapReduceRPCServiceServer) {
+	s.RegisterService(&_MapReduceRPCService_serviceDesc, srv)
+}
+
+func _MapReduceRPCService_AddTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServiceServer).AddTask(ctx, in)
+		return srv.(MapReduceRPCServiceServer).AddTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/amazingchow.mapreduce.ManagerService/AddTask",
+		FullMethod: "/amazingchow.mapreduce.MapReduceRPCService/AddTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServiceServer).AddTask(ctx, req.(*AddTaskRequest))
+		return srv.(MapReduceRPCServiceServer).AddTask(ctx, req.(*AddTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ManagerService_ListWorkers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MapReduceRPCService_ListWorkers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListWorkersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServiceServer).ListWorkers(ctx, in)
+		return srv.(MapReduceRPCServiceServer).ListWorkers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/amazingchow.mapreduce.ManagerService/ListWorkers",
+		FullMethod: "/amazingchow.mapreduce.MapReduceRPCService/ListWorkers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServiceServer).ListWorkers(ctx, req.(*ListWorkersRequest))
+		return srv.(MapReduceRPCServiceServer).ListWorkers(ctx, req.(*ListWorkersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ManagerService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "amazingchow.mapreduce.ManagerService",
-	HandlerType: (*ManagerServiceServer)(nil),
+func _MapReduceRPCService_Intercom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IntercomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapReduceRPCServiceServer).Intercom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/amazingchow.mapreduce.MapReduceRPCService/Intercom",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapReduceRPCServiceServer).Intercom(ctx, req.(*IntercomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MapReduceRPCService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "amazingchow.mapreduce.MapReduceRPCService",
+	HandlerType: (*MapReduceRPCServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddTask",
-			Handler:    _ManagerService_AddTask_Handler,
+			Handler:    _MapReduceRPCService_AddTask_Handler,
 		},
 		{
 			MethodName: "ListWorkers",
-			Handler:    _ManagerService_ListWorkers_Handler,
+			Handler:    _MapReduceRPCService_ListWorkers_Handler,
+		},
+		{
+			MethodName: "Intercom",
+			Handler:    _MapReduceRPCService_Intercom_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

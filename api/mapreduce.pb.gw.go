@@ -31,7 +31,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 
-func request_ManagerService_AddTask_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_MapReduceRPCService_AddTask_0(ctx context.Context, marshaler runtime.Marshaler, client MapReduceRPCServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq AddTaskRequest
 	var metadata runtime.ServerMetadata
 
@@ -48,7 +48,7 @@ func request_ManagerService_AddTask_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-func local_request_ManagerService_AddTask_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_MapReduceRPCService_AddTask_0(ctx context.Context, marshaler runtime.Marshaler, server MapReduceRPCServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq AddTaskRequest
 	var metadata runtime.ServerMetadata
 
@@ -65,7 +65,7 @@ func local_request_ManagerService_AddTask_0(ctx context.Context, marshaler runti
 
 }
 
-func request_ManagerService_ListWorkers_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_MapReduceRPCService_ListWorkers_0(ctx context.Context, marshaler runtime.Marshaler, client MapReduceRPCServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ListWorkersRequest
 	var metadata runtime.ServerMetadata
 
@@ -74,7 +74,7 @@ func request_ManagerService_ListWorkers_0(ctx context.Context, marshaler runtime
 
 }
 
-func local_request_ManagerService_ListWorkers_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_MapReduceRPCService_ListWorkers_0(ctx context.Context, marshaler runtime.Marshaler, server MapReduceRPCServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ListWorkersRequest
 	var metadata runtime.ServerMetadata
 
@@ -83,12 +83,12 @@ func local_request_ManagerService_ListWorkers_0(ctx context.Context, marshaler r
 
 }
 
-// RegisterManagerServiceHandlerServer registers the http handlers for service ManagerService to "mux".
-// UnaryRPC     :call ManagerServiceServer directly.
+// RegisterMapReduceRPCServiceHandlerServer registers the http handlers for service MapReduceRPCService to "mux".
+// UnaryRPC     :call MapReduceRPCServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-func RegisterManagerServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ManagerServiceServer) error {
+func RegisterMapReduceRPCServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server MapReduceRPCServiceServer) error {
 
-	mux.Handle("POST", pattern_ManagerService_AddTask_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MapReduceRPCService_AddTask_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -97,18 +97,18 @@ func RegisterManagerServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_ManagerService_AddTask_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_MapReduceRPCService_AddTask_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_ManagerService_AddTask_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MapReduceRPCService_AddTask_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_ManagerService_ListWorkers_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_MapReduceRPCService_ListWorkers_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -117,23 +117,23 @@ func RegisterManagerServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_ManagerService_ListWorkers_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_MapReduceRPCService_ListWorkers_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_ManagerService_ListWorkers_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MapReduceRPCService_ListWorkers_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterManagerServiceHandlerFromEndpoint is same as RegisterManagerServiceHandler but
+// RegisterMapReduceRPCServiceHandlerFromEndpoint is same as RegisterMapReduceRPCServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterManagerServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
@@ -153,23 +153,23 @@ func RegisterManagerServiceHandlerFromEndpoint(ctx context.Context, mux *runtime
 		}()
 	}()
 
-	return RegisterManagerServiceHandler(ctx, mux, conn)
+	return RegisterMapReduceRPCServiceHandler(ctx, mux, conn)
 }
 
-// RegisterManagerServiceHandler registers the http handlers for service ManagerService to "mux".
+// RegisterMapReduceRPCServiceHandler registers the http handlers for service MapReduceRPCService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterManagerServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterManagerServiceHandlerClient(ctx, mux, NewManagerServiceClient(conn))
+func RegisterMapReduceRPCServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterMapReduceRPCServiceHandlerClient(ctx, mux, NewMapReduceRPCServiceClient(conn))
 }
 
-// RegisterManagerServiceHandlerClient registers the http handlers for service ManagerService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "ManagerServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ManagerServiceClient"
+// RegisterMapReduceRPCServiceHandlerClient registers the http handlers for service MapReduceRPCService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "MapReduceRPCServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "MapReduceRPCServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "ManagerServiceClient" to call the correct interceptors.
-func RegisterManagerServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ManagerServiceClient) error {
+// "MapReduceRPCServiceClient" to call the correct interceptors.
+func RegisterMapReduceRPCServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client MapReduceRPCServiceClient) error {
 
-	mux.Handle("POST", pattern_ManagerService_AddTask_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MapReduceRPCService_AddTask_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -178,18 +178,18 @@ func RegisterManagerServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_ManagerService_AddTask_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_MapReduceRPCService_AddTask_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_ManagerService_AddTask_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MapReduceRPCService_AddTask_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_ManagerService_ListWorkers_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_MapReduceRPCService_ListWorkers_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -198,14 +198,14 @@ func RegisterManagerServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_ManagerService_ListWorkers_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_MapReduceRPCService_ListWorkers_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_ManagerService_ListWorkers_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MapReduceRPCService_ListWorkers_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -213,13 +213,13 @@ func RegisterManagerServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
-	pattern_ManagerService_AddTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "task"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MapReduceRPCService_AddTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "task"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_ManagerService_ListWorkers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "workers"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MapReduceRPCService_ListWorkers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "workers"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
-	forward_ManagerService_AddTask_0 = runtime.ForwardResponseMessage
+	forward_MapReduceRPCService_AddTask_0 = runtime.ForwardResponseMessage
 
-	forward_ManagerService_ListWorkers_0 = runtime.ForwardResponseMessage
+	forward_MapReduceRPCService_ListWorkers_0 = runtime.ForwardResponseMessage
 )

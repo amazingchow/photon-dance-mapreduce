@@ -37,7 +37,7 @@
           }
         ],
         "tags": [
-          "ManagerService"
+          "MapReduceRPCService"
         ]
       }
     },
@@ -53,7 +53,7 @@
           }
         },
         "tags": [
-          "ManagerService"
+          "MapReduceRPCService"
         ]
       }
     }
@@ -70,6 +70,45 @@
     },
     "mapreduceAddTaskResponse": {
       "type": "object"
+    },
+    "mapreduceIntercomResponse": {
+      "type": "object",
+      "properties": {
+        "TaskType": {
+          "$ref": "#/definitions/mapreduceTaskType"
+        },
+        "File": {
+          "type": "string"
+        },
+        "NReduce": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "MapTaskAllocated": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ReduceTaskAllocated": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ReduceFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mapreduceIntercomType": {
+      "type": "string",
+      "enum": [
+        "INTERCOM_TYPE_ASK_TASK",
+        "INTERCOM_TYPE_FINISH_MAP_TASK",
+        "INTERCOM_TYPE_FINISH_REDUCE_TASK",
+        "INTERCOM_TYPE_SEND_INTER_FILE"
+      ],
+      "default": "INTERCOM_TYPE_ASK_TASK"
     },
     "mapreduceListWorkersResponse": {
       "type": "object",
@@ -92,6 +131,14 @@
           }
         }
       }
+    },
+    "mapreduceTaskType": {
+      "type": "string",
+      "enum": [
+        "TASK_TYPE_MAP",
+        "TASK_TYPE_REDUCE"
+      ],
+      "default": "TASK_TYPE_MAP"
     },
     "mapreduceWorker": {
       "type": "object",
