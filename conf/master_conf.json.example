@@ -1,0 +1,4 @@
+{
+    "grpc_endpoint": "localhost:18081",
+    "http_endpoint": "localhost:18080"
+}

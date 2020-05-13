@@ -12,7 +12,7 @@ $(TARGETS): $(SRC)
 	go build -ldflags '$(LDFLAGS)' $(GOMODULEPATH)/$(PROJECT)/cmd/$@
 
 lint:
-	@golangci-lint run --skip-dirs=api/mapreduce --deadline=5m
+	@golangci-lint run --skip-dirs=api --deadline=5m
 
 pb-fmt:
 	@clang-format -i ./pb/*.proto
