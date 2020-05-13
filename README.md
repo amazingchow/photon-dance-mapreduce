@@ -1,8 +1,9 @@
 # mapreduce
 
-> What I cannot create, I do not understand -- by Richard Feynman.
-
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org) 
+
+![mapreduce](img/mapreduce.png)
+<center>mapreduce execution overview (from Google's MapReduce paper)</center>
 
 ## Contributing
 
@@ -29,4 +30,3 @@
 ## License
 
 * This project is licensed under the MIT License - see the **[MIT license](http://opensource.org/licenses/mit-license.php)** for details.
-
