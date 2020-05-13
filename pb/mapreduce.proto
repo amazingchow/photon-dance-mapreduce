@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "amazingchow/mapreduce/api";
+package amazingchow.mapreduce;
+
+import "google/api/annotations.proto";
+
+message Task { repeated string inputs = 1; }
+
+enum WorkerStatus {
+  WORKER_STATUS_ALIVE = 0;
+  WORKER_STATUS_UNHEALTHY = 1;
+}
+
+message Worker {
+  string id = 2;
+  WorkerStatus status = 5;
+}
+
+/* ---------- request + response ---------- */
+message AddTaskRequest { Task task = 1; }
+
+message AddTaskResponse {}
+
+message ListWorkersRequest {}
+
+message ListWorkersResponse { repeated Worker workers = 1; }
+
+/* ---------- grpc gateway ---------- */
+service ManagerService {
+  rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/task"
+      body : "*"
+    };
+  }
+
+  rpc ListWorkers(ListWorkersRequest) returns (ListWorkersResponse) {
+    option (google.api.http) = {
+      get : "/v1/workers"
+    };
+  }
+}
