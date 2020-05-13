@@ -15,3 +15,5 @@
 # vendor/
 
 /conf/*.json
+/mapreduce-master-service
+/mapreduce-worker-service

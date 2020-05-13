@@ -1,14 +1,8 @@
-VERSION      := v1.0.0
 PROJECT      := amazingchow/mapreduce
 SRC          := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 PB_SRC       := $(shell find . -type f -name '*.proto' -not -path "./vendor/*")
-TARGETS      := master worker
+TARGETS      := mapreduce-master-service mapreduce-worker-service
 ALL_TARGETS  := $(TARGETS)
-
-LDFLAGS += -X "$(PROJECT)/ch.Version=$(VERSION)"
-LDFLAGS += -X "$(PROJECT)/ch.GitBranch=$(shell git rev-parse --abbrev-ref HEAD)"
-LDFLAGS += -X "$(PROJECT)/ch.GitHash=$(shell git rev-parse HEAD)"
-LDFLAGS += -X "$(PROJECT)/ch.BuildTS=$(shell date -u '+%Y-%m-%d %I:%M:%S')"
 
 all: build
 
