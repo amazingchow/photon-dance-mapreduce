@@ -15,6 +15,12 @@ enum TaskType {
   TASK_TYPE_REDUCE = 1;
 }
 
+enum TaskStatus {
+  TASK_STATUS_UNALLOTED = 0;
+  TASK_STATUS_ALLOTED = 1;
+  TASK_STATUS_DONE = 2;
+}
+
 enum IntercomType {
   INTERCOM_TYPE_ASK_TASK = 0;
   INTERCOM_TYPE_FINISH_MAP_TASK = 1;
