@@ -4,4 +4,5 @@ package master
 type ServiceConfig struct {
 	GRPCEndpoint string `json:"grpc_endpoint"`
 	HTTPEndpoint string `json:"http_endpoint"`
+	NReduce      int32  `json:"nreduce"`
 }

@@ -6,7 +6,7 @@ ALL_TARGETS  := $(TARGETS)
 
 all: build
 
-build: $(ALL_TARGETS)
+build: clean $(ALL_TARGETS)
 
 $(TARGETS): $(SRC)
 	go build -ldflags '$(LDFLAGS)' $(GOMODULEPATH)/$(PROJECT)/cmd/$@

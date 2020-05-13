@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pbapi "github.com/amazingchow/mapreduce/api"
+	pb "github.com/amazingchow/mapreduce/api"
 	"github.com/amazingchow/mapreduce/master"
 	"github.com/amazingchow/mapreduce/utils"
 )
@@ -29,26 +29,39 @@ var (
 )
 
 type MapReduceIngressServer struct {
+	executor *master.MasterService
 }
 
-func newMapReduceIngressServer() *MapReduceIngressServer {
-	return &MapReduceIngressServer{}
+func newMapReduceIngressServer(conf *master.ServiceConfig) *MapReduceIngressServer {
+	return &MapReduceIngressServer{
+		executor: master.NewMasterService(conf),
+	}
 }
 
-func (mris *MapReduceIngressServer) AddTask(ctx context.Context, req *pbapi.AddTaskRequest) (*pbapi.AddTaskResponse, error) {
+func (mris *MapReduceIngressServer) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskResponse, error) {
 	if len(req.GetTask().GetInputs()) == 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "empty input")
 	}
 
-	return &pbapi.AddTaskResponse{}, nil
+	if err := mris.executor.AddTask(req.GetTask()); err != nil {
+		return nil, status.Errorf(codes.Unavailable, err.Error())
+	}
+
+	return &pb.AddTaskResponse{}, nil
 }
 
-func (mris *MapReduceIngressServer) ListWorkers(ctx context.Context, req *pbapi.ListWorkersRequest) (*pbapi.ListWorkersResponse, error) {
-	return &pbapi.ListWorkersResponse{}, nil
+func (mris *MapReduceIngressServer) ListWorkers(ctx context.Context, req *pb.ListWorkersRequest) (*pb.ListWorkersResponse, error) {
+	return &pb.ListWorkersResponse{}, nil
 }
 
-func (mris *MapReduceIngressServer) Intercom(ctx context.Context, req *pbapi.IntercomRequest) (*pbapi.IntercomResponse, error) {
-	return &pbapi.IntercomResponse{}, nil
+func (mris *MapReduceIngressServer) Intercom(ctx context.Context, req *pb.IntercomRequest) (*pb.IntercomResponse, error) {
+	reply := pb.IntercomResponse{}
+
+	if err := mris.executor.InterComm(req, &reply); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return &reply, nil
 }
 
 func serverGrpcService(ctx context.Context, mris *MapReduceIngressServer, conf *master.ServiceConfig, stopGroup *sync.WaitGroup, stopCh chan struct{}) {
@@ -66,7 +79,7 @@ func serverGrpcService(ctx context.Context, mris *MapReduceIngressServer, conf *
 	}
 	grpcServer := grpc.NewServer(opts...)
 
-	pbapi.RegisterMapReduceRPCServiceServer(grpcServer, mris)
+	pb.RegisterMapReduceRPCServiceServer(grpcServer, mris)
 	log.Info().Msgf("grpc is listening at %s", conf.GRPCEndpoint)
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
@@ -83,10 +96,6 @@ GRPC_LOOP:
 					break GRPC_LOOP
 				}
 			}
-		default:
-			{
-
-			}
 		}
 	}
 
@@ -94,7 +103,7 @@ GRPC_LOOP:
 	log.Info().Msg("stop grpc service")
 }
 
-func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, config *master.ServiceConfig, stopGroup *sync.WaitGroup, stopCh chan struct{}) {
+func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, conf *master.ServiceConfig, stopGroup *sync.WaitGroup, stopCh chan struct{}) {
 	stopGroup.Add(1)
 	defer stopGroup.Done()
 
@@ -102,16 +111,16 @@ func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, config
 	dialOpts := []grpc.DialOption{
 		grpc.WithInsecure(),
 	}
-	if err := pbapi.RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx, mux, config.GRPCEndpoint, dialOpts); err != nil {
+	if err := pb.RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx, mux, conf.GRPCEndpoint, dialOpts); err != nil {
 		log.Fatal().Err(err).Msg("failed to register grpc gateway")
 	}
 
 	http.Handle("/", mux)
 	httpServer := http.Server{
-		Addr: config.HTTPEndpoint,
+		Addr: conf.HTTPEndpoint,
 	}
 
-	log.Info().Msgf("grpc gateway is listening at %s", config.HTTPEndpoint)
+	log.Info().Msgf("grpc gateway is listening at %s", conf.HTTPEndpoint)
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil {
 			log.Warn().Err(err)
@@ -126,10 +135,6 @@ HTTP_LOOP:
 				if !ok {
 					break HTTP_LOOP
 				}
-			}
-		default:
-			{
-
 			}
 		}
 	}
@@ -171,7 +176,8 @@ func main() {
 	}()
 	stopCh := make(chan struct{})
 
-	mris := newMapReduceIngressServer()
+	mris := newMapReduceIngressServer(&conf)
+	mris.executor.Start() // nolint
 
 	// serve grpc service && http service
 	ctx := context.Background()
@@ -195,10 +201,8 @@ MAIN_LOOP:
 				close(stopCh)
 				break MAIN_LOOP
 			}
-		default:
-			{
-
-			}
 		}
 	}
+
+	mris.executor.Stop() // nolint
 }
