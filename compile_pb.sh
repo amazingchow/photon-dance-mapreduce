@@ -10,8 +10,8 @@ rm -rf api
 PROTO_INSTALL=/usr/local
 
 cd $GOMODULEPATH
-for i in $(ls $GOMODULEPATH/amazingchow/mapreduce/pb/*.proto); do
-	fn=amazingchow/mapreduce/pb/$(basename "$i")
+for i in $(ls $GOMODULEPATH/github.com/amazingchow/mapreduce/pb/*.proto); do
+	fn=github.com/amazingchow/mapreduce/pb/$(basename "$i")
 	echo "compile" $fn
 	$PROTO_INSTALL/bin/protoc -I$PROTO_INSTALL/include -I . \
 		-I$GOMODULEPATH \

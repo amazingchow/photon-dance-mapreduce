@@ -1,4 +1,4 @@
-PROJECT      := amazingchow/mapreduce
+PROJECT      := github.com/amazingchow/mapreduce
 SRC          := $(shell find . -type f -name '*.go' -not -path "./vendor/*, ./apps/*")
 PB_SRC       := $(shell find . -type f -name '*.proto' -not -path "./vendor/*")
 MASTER       := mapreduce-master-service
