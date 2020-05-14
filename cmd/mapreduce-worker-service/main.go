@@ -50,15 +50,7 @@ func main() {
 	// wait for exit signal
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-MAIN_LOOP:
-	for { // nolint
-		select {
-		case <-sigCh:
-			{
-				break MAIN_LOOP
-			}
-		}
-	}
+	<-sigCh
 
 	executor.Stop() // nolint
 }

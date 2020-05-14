@@ -1,6 +1,8 @@
 package worker
 
-import "github.com/amazingchow/mapreduce/backend/storage"
+import (
+	"github.com/amazingchow/mapreduce/backend/storage"
+)
 
 type KeyValueList []storage.KeyValue
 

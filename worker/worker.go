@@ -89,7 +89,7 @@ func (w *WorkerService) Stop() error {
 
 func (w *WorkerService) askForTask() *pb.IntercomResponse {
 	cli := pb.NewMapReduceRPCServiceClient(w.conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	args := pb.IntercomRequest{}
@@ -108,7 +108,7 @@ func (w *WorkerService) askForTask() *pb.IntercomResponse {
 
 func (w *WorkerService) sendInterFiles(tmpFile string, nReduceBucket int32) *pb.IntercomResponse {
 	cli := pb.NewMapReduceRPCServiceClient(w.conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	args := pb.IntercomRequest{}
@@ -127,7 +127,7 @@ func (w *WorkerService) sendInterFiles(tmpFile string, nReduceBucket int32) *pb.
 
 func (w *WorkerService) finishTask(msgType pb.IntercomType, task string) *pb.IntercomResponse {
 	cli := pb.NewMapReduceRPCServiceClient(w.conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	args := pb.IntercomRequest{}
@@ -284,4 +284,6 @@ OnStopLabel:
 			}
 		}
 	}
+
+	log.Info().Msg("stop mapreduce worker node service")
 }

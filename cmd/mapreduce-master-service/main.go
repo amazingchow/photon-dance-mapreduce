@@ -43,7 +43,7 @@ func (mris *MapReduceIngressServer) AddTask(ctx context.Context, req *pb.AddTask
 		return nil, status.Errorf(codes.InvalidArgument, "empty input")
 	}
 
-	if err := mris.executor.AddTask(req.GetTask()); err != nil {
+	if err := mris.executor.AddTask(ctx, req.GetTask()); err != nil {
 		return nil, status.Errorf(codes.Unavailable, err.Error())
 	}
 
@@ -57,7 +57,7 @@ func (mris *MapReduceIngressServer) ListWorkers(ctx context.Context, req *pb.Lis
 func (mris *MapReduceIngressServer) Intercom(ctx context.Context, req *pb.IntercomRequest) (*pb.IntercomResponse, error) {
 	reply := pb.IntercomResponse{}
 
-	if err := mris.executor.InterComm(req, &reply); err != nil {
+	if err := mris.executor.InterComm(ctx, req, &reply); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -191,17 +191,9 @@ func main() {
 	// wait for exit signal
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-MAIN_LOOP:
-	for { // nolint
-		select {
-		case <-sigCh:
-			{
-				// send stop signal to grpc service && http service
-				close(stopCh)
-				break MAIN_LOOP
-			}
-		}
-	}
+	<-sigCh
+	// send stop signal to grpc service && http service
+	close(stopCh)
 
 	mris.executor.Stop() // nolint
 }

@@ -1,6 +1,7 @@
 package master
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
@@ -66,7 +67,7 @@ func (m *MasterService) Stop() error {
 }
 
 // AddTask adds computing job to mapreduce backend service.
-func (m *MasterService) AddTask(task *pb.Task) error {
+func (m *MasterService) AddTask(ctx context.Context, task *pb.Task) error {
 	select {
 	case <-m.AllTasksFinishedSig:
 		{
@@ -108,42 +109,54 @@ OnAddTask:
 }
 
 // InterComm used for internal-communication called by workers.
-func (m *MasterService) InterComm(args *pb.IntercomRequest, reply *pb.IntercomResponse) error {
+func (m *MasterService) InterComm(ctx context.Context, args *pb.IntercomRequest, reply *pb.IntercomResponse) error {
 	switch args.GetMsgType() {
 	case pb.IntercomType_INTERCOM_TYPE_ASK_TASK:
 		{
-			select {
-			case task := <-m.MapTaskCh:
-				{
-					reply.TaskType = pb.TaskType_TASK_TYPE_MAP
-					reply.File = task
-					reply.NReduce = m.NReduce
-					reply.MapTaskAllocated = m.NMap
+		OnExitLabel:
+			for {
+				select {
+				case task := <-m.MapTaskCh:
+					{
+						reply.TaskType = pb.TaskType_TASK_TYPE_MAP
+						reply.File = task
+						reply.NReduce = m.NReduce
+						reply.MapTaskAllocated = m.NMap
 
-					m.mu.Lock()
-					m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
-					m.NMap++
-					m.mu.Unlock()
+						m.mu.Lock()
+						m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
+						m.NMap++
+						m.mu.Unlock()
 
-					go m.takeFaultTolerantPolicy(pb.TaskType_TASK_TYPE_MAP, task)
-				}
-			case task := <-m.ReduceTaskCh:
-				{
-					reply.TaskType = pb.TaskType_TASK_TYPE_REDUCE
-					reply.NReduce = m.NReduce
-					x, _ := strconv.Atoi(task)
-					reply.ReduceTaskAllocated = int32(x)
-					reply.ReduceFiles = m.InterFiles[x]
+						go m.takeFaultTolerantPolicy(pb.TaskType_TASK_TYPE_MAP, task)
+						break OnExitLabel
+					}
+				case task := <-m.ReduceTaskCh:
+					{
+						reply.TaskType = pb.TaskType_TASK_TYPE_REDUCE
+						reply.NReduce = m.NReduce
+						x, _ := strconv.Atoi(task)
+						reply.ReduceTaskAllocated = int32(x)
+						reply.ReduceFiles = m.InterFiles[x]
 
-					m.mu.Lock()
-					m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
-					m.mu.Unlock()
+						m.mu.Lock()
+						m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
+						m.mu.Unlock()
 
-					go m.takeFaultTolerantPolicy(pb.TaskType_TASK_TYPE_REDUCE, task)
-				}
-			case <-m.AllTasksFinishedSig:
-				{
-					return errors.New("no tasks available")
+						go m.takeFaultTolerantPolicy(pb.TaskType_TASK_TYPE_REDUCE, task)
+						break OnExitLabel
+					}
+				case <-m.AllTasksFinishedSig:
+					{
+						return errors.New("no tasks available")
+					}
+				default:
+					{
+						if IsContextDone(ctx) {
+
+							return errors.New("ctx done")
+						}
+					}
 				}
 			}
 		}
