@@ -47,8 +47,6 @@ func NewMasterService(conf *ServiceConfig) *MasterService {
 	m.StopSig = make(chan struct{})
 	m.InterFiles = make([][]string, conf.NReduce)
 
-	go m.run()
-
 	return &m
 }
 

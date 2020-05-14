@@ -1,0 +1,4 @@
+{
+    "master_grpc_endpoint": "localhost:18081",
+    "id": "worker-1"
+}
