@@ -1,15 +1,22 @@
 PROJECT      := amazingchow/mapreduce
 SRC          := $(shell find . -type f -name '*.go' -not -path "./vendor/*, ./apps/*")
 PB_SRC       := $(shell find . -type f -name '*.proto' -not -path "./vendor/*")
-TARGETS      := mapreduce-master-service mapreduce-worker-service
-ALL_TARGETS  := $(TARGETS)
+MASTER       := mapreduce-master-service
+WORKER       := mapreduce-worker-service
+ALL_TARGETS  := $(MASTER) $(WORKER)
+APP          := $(shell pwd)/apps/wc.so
+
+LDFLAGS += -X "$(PROJECT)/utils.Plugin=$(APP)"
 
 all: build
 
 build: clean $(ALL_TARGETS)
 
-$(TARGETS): $(SRC)
+$(MASTER): $(SRC)
 	go build $(GOMODULEPATH)/$(PROJECT)/cmd/$@
+
+$(WORKER): $(SRC)
+	go build -ldflags '$(LDFLAGS)' $(GOMODULEPATH)/$(PROJECT)/cmd/$@
 
 lint:
 	@golangci-lint run --skip-dirs=api --deadline=5m
