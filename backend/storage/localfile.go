@@ -46,8 +46,10 @@ func (f *LocalFilePersister) localPath(file IndexFile) string {
 // RetrieveMRIdx retrieves MapIdx and ReduceIdx from given path.
 // Path must meet naming rule "/path/to/MR-Map-%d-Reduce-%d.tmp".
 func (f *LocalFilePersister) RetrieveMRIdx(path string) (int32, int32) {
+	_, filename := filepath.Split(path)
+
 	reg := regexp.MustCompile(`[0-9]`)
-	ret := reg.FindAllString(path, -1)
+	ret := reg.FindAllString(filename, -1)
 	if len(ret) != 2 {
 		return -1, -1
 	}

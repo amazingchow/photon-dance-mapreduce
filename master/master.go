@@ -30,6 +30,8 @@ type MasterService struct {
 	StopSig                chan struct{}
 
 	InterFiles [][]string
+
+	FirstOrder bool
 }
 
 func NewMasterService(conf *ServiceConfig) *MasterService {
@@ -47,6 +49,7 @@ func NewMasterService(conf *ServiceConfig) *MasterService {
 	m.AllTasksFinishedSig = make(chan struct{})
 	m.StopSig = make(chan struct{})
 	m.InterFiles = make([][]string, conf.NReduce)
+	m.FirstOrder = true
 
 	return &m
 }
@@ -68,15 +71,19 @@ func (m *MasterService) Stop() error {
 
 // AddTask adds computing job to mapreduce backend service.
 func (m *MasterService) AddTask(ctx context.Context, task *pb.Task) error {
-	select {
-	case <-m.AllTasksFinishedSig:
-		{
-			goto OnAddTask
-		}
-	default:
-		{
-			// if former computing job has not been finished, we should not provide service now.
-			return errors.New("backend busy")
+	if m.FirstOrder {
+		goto OnAddTask
+	} else {
+		select {
+		case <-m.AllTasksFinishedSig:
+			{
+				goto OnAddTask
+			}
+		default:
+			{
+				// if former computing job has not been finished, we should not provide service now.
+				return errors.New("backend busy")
+			}
 		}
 	}
 
@@ -98,7 +105,11 @@ OnAddTask:
 		m.ReduceTaskTable[fmt.Sprintf("%d", i)] = pb.TaskStatus_TASK_STATUS_UNALLOTED
 	}
 
-	m.InterFiles = m.InterFiles[:0]
+	if m.FirstOrder {
+		m.InterFiles = make([][]string, m.NReduce)
+	} else {
+		m.InterFiles = m.InterFiles[:0]
+	}
 	for i = 0; i < m.NReduce; i++ {
 		m.InterFiles[i] = make([]string, 0)
 	}
@@ -287,6 +298,7 @@ OnStopLabel:
 				}
 				m.AllReduceTasksFinished = true
 
+				m.FirstOrder = false
 				m.AllTasksFinishedSig <- struct{}{}
 
 				log.Info().Msg("all tasks done")
