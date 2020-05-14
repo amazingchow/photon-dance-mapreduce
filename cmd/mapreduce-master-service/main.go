@@ -80,7 +80,7 @@ func serverGrpcService(ctx context.Context, mris *MapReduceIngressServer, conf *
 	grpcServer := grpc.NewServer(opts...)
 
 	pb.RegisterMapReduceRPCServiceServer(grpcServer, mris)
-	log.Info().Msgf("grpc is listening at %s", conf.GRPCEndpoint)
+	log.Info().Msgf("grpc service is listening at \x1b[1;31m%s\x1b[0m", conf.GRPCEndpoint)
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Warn().Err(err)
@@ -112,7 +112,7 @@ func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, conf *
 		grpc.WithInsecure(),
 	}
 	if err := pb.RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx, mux, conf.GRPCEndpoint, dialOpts); err != nil {
-		log.Fatal().Err(err).Msg("failed to register grpc gateway")
+		log.Fatal().Err(err).Msg("failed to register http service")
 	}
 
 	http.Handle("/", mux)
@@ -120,7 +120,7 @@ func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, conf *
 		Addr: conf.HTTPEndpoint,
 	}
 
-	log.Info().Msgf("grpc gateway is listening at %s", conf.HTTPEndpoint)
+	log.Info().Msgf("http service is listening at \x1b[1;31m%s\x1b[0m", conf.HTTPEndpoint)
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil {
 			log.Warn().Err(err)
@@ -140,9 +140,9 @@ HTTP_LOOP:
 	}
 
 	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Warn().Err(err).Msg("failed to stop grpc gateway")
+		log.Warn().Err(err).Msg("failed to stop http service")
 	}
-	log.Info().Msg("stop grpc gateway")
+	log.Info().Msg("stop http service")
 }
 
 func main() {
@@ -172,7 +172,6 @@ func main() {
 	stopGroup := &sync.WaitGroup{}
 	defer func() {
 		stopGroup.Wait()
-		log.Info().Msg("stop mapreduce master service")
 	}()
 	stopCh := make(chan struct{})
 
