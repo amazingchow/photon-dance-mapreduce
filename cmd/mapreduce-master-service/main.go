@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	_ConfigPath = flag.String("conf", "config/config.json", "worker config")
+	_ConfigPath = flag.String("conf", "conf/master_conf.json", "worker config")
 	_Level      = flag.String("level", "info", "log level, options [debug info warn error]")
 )
 
