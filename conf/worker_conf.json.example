@@ -1,4 +1,5 @@
 {
+    "id": "worker-1",
     "master_grpc_endpoint": "localhost:18081",
-    "id": "worker-1"
+    "dump_root_path": "/data/mapreduce"
 }
