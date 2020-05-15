@@ -1,5 +1,12 @@
 {
     "id": "worker-1",
     "master_grpc_endpoint": "localhost:18081",
+    "s3": {
+        "endpoint": "localhost:9000",
+        "access_key_id": "minioadmin",
+        "secret_access_key_id": "admin12345",
+        "use_ssl": false,
+        "bucket": "word-count"
+    },
     "dump_root_path": "/data/mapreduce"
 }

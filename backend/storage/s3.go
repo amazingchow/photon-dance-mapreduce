@@ -31,6 +31,7 @@ type S3Config struct {
 	SecretAccessKeyID string `json:"secret_access_key_id"`
 	UseSSL            bool   `json:"use_ssl"`
 	Bucket            string `json:"bucket"`
+	Root              string `json:"root"`
 }
 
 // NewS3Persister returns s3 persist service instance.
@@ -49,7 +50,7 @@ func NewS3Persister(conf *S3Config) (*S3Persister, error) {
 
 	return &S3Persister{
 		conf:   conf,
-		root:   "mapreduce",
+		root:   conf.Root,
 		tmp:    tmpDir,
 		client: client,
 	}, nil
@@ -88,8 +89,10 @@ func (s *S3Persister) localPath(file IndexFile) string {
 // RetrieveMRIdx retrieves MapIdx and ReduceIdx from given path.
 // Path must meet naming rule "/path/to/MR-Map-%d-Reduce-%d.tmp".
 func (s *S3Persister) RetrieveMRIdx(path string) (int32, int32) {
+	_, filename := filepath.Split(path)
+
 	reg := regexp.MustCompile(`[0-9]`)
-	ret := reg.FindAllString(path, -1)
+	ret := reg.FindAllString(filename, -1)
 	if len(ret) != 2 {
 		return -1, -1
 	}
