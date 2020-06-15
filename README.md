@@ -1,11 +1,10 @@
-# mapreduce
-
-![mapreduce](img/mapreduce.png)
-``mapreduce execution overview (from Google's MapReduce paper)``
-
-MapReduce  is  a kind of programming  model  for  processing large scale  data  sets  in  a  distributed  fashion  over  a cluster of  machines. The  core  idea  behind  MapReduce  is  mapping  your  data  sets  into  a  collection  of  {key,  value}  pairs,  and  then  reducing  over  all  pairs  with  the  same  key.
+# MapReduce
 
 [![Build Status](http://img.shields.io/travis/badges/badgerbadgerbadger.svg?style=flat-square)](https://travis-ci.org/badges/badgerbadgerbadger) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org) 
+
+``MapReduce`` is a kind of programming model for processing large scale data sets in a distributed fashion inside machine cluster. The core idea behind ``MapReduce`` is to map your data sets into a collection of {key, value} pairs, and then to reduce over all pairs with the same key.
+
+![mapreduce](doc/mr.png)
 
 ## Get Started
 
@@ -18,19 +17,18 @@ MapReduce  is  a kind of programming  model  for  processing large sca
 
 #### Clone
 
-* Clone this repo to your local machine using https://github.com/amazingchow/leo.git.
+* Clone this repo to your local machine using https://github.com/amazingchow/mapreduce.git.
 
 #### Setup
 
 ```shell
 # build the plugin
-cd apps
-make build
+cd apps && make build
 ```
 
 ```shell
 # build the binary
-make build
+cd .. && make build
 ```
 
 ```shell
