@@ -4,9 +4,10 @@ import (
 	"context"
 	"flag"
 	"net"
-	_ "net/http/pprof"
 	"os"
 	"os/signal"
+	"runtime"
+	"runtime/pprof"
 	"sync"
 	"syscall"
 	"time"
@@ -25,6 +26,8 @@ import (
 var (
 	_ConfigPath = flag.String("conf", "conf/master_conf.json", "worker config")
 	_Level      = flag.String("level", "info", "log level, options [debug info warn error]")
+	_CPUProfile = flag.String("cpuprofile", "cpu.prof", "dump cpu profile")
+	_MemProfile = flag.String("memprofile", "mem.prof", "dump memory profile")
 )
 
 type MapReduceIngressServer struct {
@@ -118,6 +121,37 @@ func main() {
 		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	default:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
+
+	{
+		if *_CPUProfile != "" {
+			fd, err := os.Create(*_CPUProfile)
+			if err != nil {
+				log.Fatal().Err(err).Msg("failed to create CPU profile file")
+			}
+			defer fd.Close()
+
+			if err := pprof.StartCPUProfile(fd); err != nil {
+				log.Fatal().Err(err).Msg("failed to start CPU profile")
+			}
+			defer pprof.StopCPUProfile()
+		}
+
+		defer func() {
+			if *_MemProfile != "" {
+				fd, err := os.Create(*_MemProfile)
+				if err != nil {
+					log.Fatal().Err(err).Msg("failed to create Mem profile file")
+				}
+				defer fd.Close()
+
+				// get up-to-date statistics
+				runtime.GC()
+				if err := pprof.WriteHeapProfile(fd); err != nil {
+					log.Fatal().Err(err).Msg("failed to start Mem profile")
+				}
+			}
+		}()
 	}
 
 	// load master config
