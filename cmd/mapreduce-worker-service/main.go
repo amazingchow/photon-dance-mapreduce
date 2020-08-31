@@ -19,7 +19,10 @@ import (
 var (
 	_ConfigPath = flag.String("conf", "conf/worker_1_conf.json", "worker config")
 	_Level      = flag.String("level", "info", "log level, options [debug info warn error]")
+
+	// go tool pprof mapreduce-master-service cpu.prof
 	_CPUProfile = flag.String("cpuprofile", "cpu.prof", "dump cpu profile")
+	// go tool pprof mapreduce-master-service mem.prof
 	_MemProfile = flag.String("memprofile", "mem.prof", "dump memory profile")
 )
 
