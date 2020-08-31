@@ -28,9 +28,9 @@ var (
 	_Level      = flag.String("level", "info", "log level, options [debug info warn error]")
 
 	// go tool pprof mapreduce-master-service cpu.prof
-	_CPUProfile = flag.String("cpuprofile", "cpu.prof", "dump cpu profile")
+	_CPUProfile = flag.String("cpuprofile", "", "dump cpu profile")
 	// go tool pprof mapreduce-master-service mem.prof
-	_MemProfile = flag.String("memprofile", "mem.prof", "dump memory profile")
+	_MemProfile = flag.String("memprofile", "", "dump memory profile")
 )
 
 type MapReduceIngressServer struct {

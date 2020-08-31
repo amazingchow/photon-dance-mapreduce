@@ -11,9 +11,13 @@ all: build
 
 build: clean $(ALL_TARGETS)
 
+# 在启动前加上环境变量来观察实时的GC信息
+# env GODEBUG=gctrace=1 ./mapreduce-master-service --conf=conf/master_conf.json --cpuprofile=cpu.prof --memprofile=mem.prof
 $(MASTER): $(SRC)
 	go build $(GOMODULEPATH)/$(PROJECT)/cmd/$@
 
+# 在启动前加上环境变量来观察实时的GC信息
+# env GODEBUG=gctrace=1 ./mapreduce-worker-service --conf=conf/worker_conf.json --cpuprofile=cpu.prof --memprofile=mem.prof
 $(WORKER): $(SRC)
 	go build -ldflags '$(LDFLAGS)' $(GOMODULEPATH)/$(PROJECT)/cmd/$@
 
