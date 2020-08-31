@@ -166,7 +166,7 @@ func (w *WorkerService) runMapMode(reply *pb.IntercomResponse) {
 
 		file := storage.IndexFile{
 			Temporary: true,
-			MapIdx:    reply.GetMapTaskAllocated(),
+			MapIdx:    reply.GetMapTaskAttached(),
 			ReduceIdx: i,
 			Body:      &(kvp[i]),
 		}
@@ -239,7 +239,7 @@ func (w *WorkerService) runReduceMode(reply *pb.IntercomResponse) {
 		file := storage.IndexFile{
 			Temporary: false,
 			MapIdx:    -1,
-			ReduceIdx: reply.GetReduceTaskAllocated(),
+			ReduceIdx: reply.GetReduceTaskAttached(),
 			Body:      &kvs,
 		}
 		if _, err := w.Storage.Writable(file); err == nil {
@@ -248,7 +248,7 @@ func (w *WorkerService) runReduceMode(reply *pb.IntercomResponse) {
 			}
 		}
 
-		w.finishTask(pb.IntercomType_INTERCOM_TYPE_FINISH_REDUCE_TASK, fmt.Sprintf("%d", reply.GetReduceTaskAllocated()))
+		w.finishTask(pb.IntercomType_INTERCOM_TYPE_FINISH_REDUCE_TASK, fmt.Sprintf("%d", reply.GetReduceTaskAttached()))
 	} else {
 		log.Error().Msg("failed to do reduce, since something wrong happened at backend storatge")
 	}

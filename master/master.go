@@ -94,7 +94,7 @@ OnAddTask:
 		delete(m.MapTaskTable, task)
 	}
 	for _, file := range task.Inputs {
-		m.MapTaskTable[file] = pb.TaskStatus_TASK_STATUS_UNALLOTED
+		m.MapTaskTable[file] = pb.TaskStatus_TASK_STATUS_UNATTACHED
 	}
 
 	for task := range m.ReduceTaskTable {
@@ -102,7 +102,7 @@ OnAddTask:
 	}
 	var i int32 = 0
 	for ; i < m.NReduce; i++ {
-		m.ReduceTaskTable[fmt.Sprintf("%d", i)] = pb.TaskStatus_TASK_STATUS_UNALLOTED
+		m.ReduceTaskTable[fmt.Sprintf("%d", i)] = pb.TaskStatus_TASK_STATUS_UNATTACHED
 	}
 
 	if m.FirstOrder {
@@ -132,10 +132,10 @@ func (m *MasterService) InterComm(ctx context.Context, args *pb.IntercomRequest,
 						reply.TaskType = pb.TaskType_TASK_TYPE_MAP
 						reply.File = task
 						reply.NReduce = m.NReduce
-						reply.MapTaskAllocated = m.NMap
+						reply.MapTaskAttached = m.NMap
 
 						m.mu.Lock()
-						m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
+						m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_ATTACHED
 						m.NMap++
 						m.mu.Unlock()
 
@@ -147,11 +147,11 @@ func (m *MasterService) InterComm(ctx context.Context, args *pb.IntercomRequest,
 						reply.TaskType = pb.TaskType_TASK_TYPE_REDUCE
 						reply.NReduce = m.NReduce
 						x, _ := strconv.Atoi(task)
-						reply.ReduceTaskAllocated = int32(x)
+						reply.ReduceTaskAttached = int32(x)
 						reply.ReduceFiles = m.InterFiles[x]
 
 						m.mu.Lock()
-						m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_ALLOTED
+						m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_ATTACHED
 						m.mu.Unlock()
 
 						go m.takeFaultTolerantPolicy(pb.TaskType_TASK_TYPE_REDUCE, task)
@@ -175,7 +175,7 @@ func (m *MasterService) InterComm(ctx context.Context, args *pb.IntercomRequest,
 		{
 			m.mu.Lock()
 			task := args.MsgContent
-			if m.MapTaskTable[task] == pb.TaskStatus_TASK_STATUS_ALLOTED {
+			if m.MapTaskTable[task] == pb.TaskStatus_TASK_STATUS_ATTACHED {
 				m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_DONE
 			}
 			m.mu.Unlock()
@@ -184,7 +184,7 @@ func (m *MasterService) InterComm(ctx context.Context, args *pb.IntercomRequest,
 		{
 			m.mu.Lock()
 			task := args.MsgContent
-			if m.ReduceTaskTable[task] == pb.TaskStatus_TASK_STATUS_ALLOTED {
+			if m.ReduceTaskTable[task] == pb.TaskStatus_TASK_STATUS_ATTACHED {
 				m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_DONE
 			}
 			m.mu.Unlock()
@@ -211,14 +211,14 @@ OnExitLabel:
 			{
 				if taskType == pb.TaskType_TASK_TYPE_MAP {
 					m.mu.Lock()
-					m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_UNALLOTED
+					m.MapTaskTable[task] = pb.TaskStatus_TASK_STATUS_UNATTACHED
 					m.mu.Unlock()
 
 					log.Debug().Msgf("map task <%s> timeouts, reschedule it again", task)
 					m.MapTaskCh <- task
 				} else if taskType == pb.TaskType_TASK_TYPE_REDUCE {
 					m.mu.Lock()
-					m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_UNALLOTED
+					m.ReduceTaskTable[task] = pb.TaskStatus_TASK_STATUS_UNATTACHED
 					m.mu.Unlock()
 
 					log.Debug().Msgf("reduce task <%s> timeouts, reschedule it again", task)

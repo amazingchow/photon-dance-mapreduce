@@ -4,8 +4,11 @@ option go_package = "github.com/amazingchow/photon-dance-mapreduce/api";
 package amazingchow.photon_dance_mapreduce;
 
 enum WorkerStatus {
-	WORKER_STATUS_ALIVE = 0;
-	WORKER_STATUS_UNHEALTHY = 1;
+	WORKER_STATUS_ONLINE = 0;
+	WORKER_STATUS_OFFLINE = 1;
+	WORKER_STATUS_READY = 2;
+	WORKER_STATUS_BUSY = 3;
+	WORKER_STATUS_UNAVAILABLE = 4;
 }
 
 enum TaskType {
@@ -14,9 +17,10 @@ enum TaskType {
 }
 
 enum TaskStatus {
-	TASK_STATUS_UNALLOTED = 0;
-	TASK_STATUS_ALLOTED = 1;
-	TASK_STATUS_DONE = 2;
+	TASK_STATUS_UNATTACHED = 0;
+	TASK_STATUS_ATTACHED = 1;
+	TASK_STATUS_ONDOING = 2;
+	TASK_STATUS_DONE = 3;
 }
 
 enum IntercomType {
@@ -33,8 +37,8 @@ message Task
 
 message Worker
 {
-	string id = 2;
-	WorkerStatus status = 5;
+	string id = 1;
+	WorkerStatus status = 2;
 }
 
 /* ---------- request + response ---------- */
@@ -64,8 +68,8 @@ message IntercomResponse
 	TaskType TaskType = 1;
 	string File = 2;
 	int32 NReduce = 3;
-	int32 MapTaskAllocated = 4;
-	int32 ReduceTaskAllocated = 5;
+	int32 MapTaskAttached = 4;
+	int32 ReduceTaskAttached = 5;
 	repeated string ReduceFiles = 6;
 }
 
