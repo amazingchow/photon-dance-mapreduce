@@ -1,13 +1,13 @@
-# MapReduce
+# photon-dance-mapreduce
 
-![mapreduce](doc/mr.png)
+![mapreduce](doc/mr.jpg)
 
 ## Get Started
 
 ### Prerequisites
 
-* OS: Linux
-* Golang: v1.12+
+* OS - debian/ubuntu linux release
+* Go - go1.12.7 linux/amd64 or higher
 
 ### Installation
 
@@ -15,37 +15,25 @@
 
 * Clone this repo to your local machine using https://github.com/amazingchow/photon-dance-mapreduce.git.
 
-#### Setup
+#### Example Usage
 
 ```shell
 # build the plugin
 cd apps && make build
-```
 
-```shell
 # build the binary
 cd .. && make build
-```
 
-```shell
 # start the master service
 ./mapreduce-master-service --conf=conf/master_conf.json --level=info
-```
 
-```shell
 # start the worker-1 service
 ./mapreduce-worker-service --conf=conf/worker_1_conf.json --level=info
-
 # start the worker-2 service
 ./mapreduce-worker-service --conf=conf/worker_2_conf.json --level=info
-
 # start the worker-3 service
 ./mapreduce-worker-service --conf=conf/worker_3_conf.json --level=info
-```
 
-#### Example
-
-```shell
 # add task
 curl -XPOST -d \
     '{"task": {"inputs": ["/path/to/input-1.txt", "/path/to/input-2.txt", "/path/to/input-3.txt"]}}' \
