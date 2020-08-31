@@ -1,6 +1,6 @@
 package worker
 
-import "github.com/amazingchow/mapreduce/backend/storage"
+import "github.com/amazingchow/photon-dance-mapreduce/backend/storage"
 
 // ServiceConfig defines worker config.
 type ServiceConfig struct {

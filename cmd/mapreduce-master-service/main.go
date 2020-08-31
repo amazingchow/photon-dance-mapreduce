@@ -19,9 +19,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/amazingchow/mapreduce/api"
-	"github.com/amazingchow/mapreduce/master"
-	"github.com/amazingchow/mapreduce/utils"
+	pb "github.com/amazingchow/photon-dance-mapreduce/api"
+	"github.com/amazingchow/photon-dance-mapreduce/master"
+	"github.com/amazingchow/photon-dance-mapreduce/utils"
 )
 
 var (

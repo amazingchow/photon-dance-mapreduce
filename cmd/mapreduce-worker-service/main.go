@@ -11,8 +11,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/amazingchow/mapreduce/utils"
-	"github.com/amazingchow/mapreduce/worker"
+	"github.com/amazingchow/photon-dance-mapreduce/utils"
+	"github.com/amazingchow/photon-dance-mapreduce/worker"
 )
 
 var (

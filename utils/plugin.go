@@ -5,7 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/amazingchow/mapreduce/backend/storage"
+	"github.com/amazingchow/photon-dance-mapreduce/backend/storage"
 )
 
 var (

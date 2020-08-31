@@ -10,7 +10,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	pb "github.com/amazingchow/mapreduce/api"
+	pb "github.com/amazingchow/photon-dance-mapreduce/api"
 )
 
 type MasterService struct {

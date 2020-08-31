@@ -1,4 +1,4 @@
-PROJECT      := github.com/amazingchow/mapreduce
+PROJECT      := github.com/amazingchow/photon-dance-mapreduce
 SRC          := $(shell find . -type f -name '*.go' -not -path "./vendor/*, ./apps/*")
 MASTER       := mapreduce-master-service
 WORKER       := mapreduce-worker-service

@@ -1,7 +1,7 @@
 package worker
 
 import (
-	"github.com/amazingchow/mapreduce/backend/storage"
+	"github.com/amazingchow/photon-dance-mapreduce/backend/storage"
 )
 
 type KeyValueList []storage.KeyValue

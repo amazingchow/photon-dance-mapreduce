@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/amazingchow/mapreduce/backend/storage"
+	"github.com/amazingchow/photon-dance-mapreduce/backend/storage"
 )
 
 func Map(filename string, contents string) []storage.KeyValue { // nolint
