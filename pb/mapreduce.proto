@@ -1,78 +1,78 @@
 syntax = "proto3";
 
-option go_package = "amazingchow/mapreduce/api";
-package amazingchow.mapreduce;
-
-import "google/api/annotations.proto";
+option go_package = "github.com/amazingchow/photon-dance-mapreduce/api";
+package amazingchow.photon_dance_mapreduce;
 
 enum WorkerStatus {
-  WORKER_STATUS_ALIVE = 0;
-  WORKER_STATUS_UNHEALTHY = 1;
+	WORKER_STATUS_ALIVE = 0;
+	WORKER_STATUS_UNHEALTHY = 1;
 }
 
 enum TaskType {
-  TASK_TYPE_MAP = 0;
-  TASK_TYPE_REDUCE = 1;
+	TASK_TYPE_MAP = 0;
+	TASK_TYPE_REDUCE = 1;
 }
 
 enum TaskStatus {
-  TASK_STATUS_UNALLOTED = 0;
-  TASK_STATUS_ALLOTED = 1;
-  TASK_STATUS_DONE = 2;
+	TASK_STATUS_UNALLOTED = 0;
+	TASK_STATUS_ALLOTED = 1;
+	TASK_STATUS_DONE = 2;
 }
 
 enum IntercomType {
-  INTERCOM_TYPE_ASK_TASK = 0;
-  INTERCOM_TYPE_FINISH_MAP_TASK = 1;
-  INTERCOM_TYPE_FINISH_REDUCE_TASK = 2;
-  INTERCOM_TYPE_SEND_INTER_FILE = 3;
+	INTERCOM_TYPE_ASK_TASK = 0;
+	INTERCOM_TYPE_FINISH_MAP_TASK = 1;
+	INTERCOM_TYPE_FINISH_REDUCE_TASK = 2;
+	INTERCOM_TYPE_SEND_INTER_FILE = 3;
 }
 
-message Task { repeated string inputs = 1; }
+message Task
+{
+	repeated string inputs = 1;
+}
 
-message Worker {
-  string id = 2;
-  WorkerStatus status = 5;
+message Worker
+{
+	string id = 2;
+	WorkerStatus status = 5;
 }
 
 /* ---------- request + response ---------- */
-message AddTaskRequest { Task task = 1; }
+message AddTaskRequest
+{
+	Task task = 1;
+}
 
 message AddTaskResponse {}
 
 message ListWorkersRequest {}
 
-message ListWorkersResponse { repeated Worker workers = 1; }
-
-message IntercomRequest {
-  IntercomType MsgType = 1;
-  string MsgContent = 2;
-  string Extra = 3;
+message ListWorkersResponse
+{
+	repeated Worker workers = 1;
 }
 
-message IntercomResponse {
-  TaskType TaskType = 1;
-  string File = 2;
-  int32 NReduce = 3;
-  int32 MapTaskAllocated = 4;
-  int32 ReduceTaskAllocated = 5;
-  repeated string ReduceFiles = 6;
+message IntercomRequest
+{
+	IntercomType MsgType = 1;
+	string MsgContent = 2;
+	string Extra = 3;
+}
+
+message IntercomResponse
+{
+	TaskType TaskType = 1;
+	string File = 2;
+	int32 NReduce = 3;
+	int32 MapTaskAllocated = 4;
+	int32 ReduceTaskAllocated = 5;
+	repeated string ReduceFiles = 6;
 }
 
 /* ---------- grpc gateway ---------- */
-service MapReduceRPCService {
-  rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {
-    option (google.api.http) = {
-      post : "/v1/task"
-      body : "*"
-    };
-  }
-
-  rpc ListWorkers(ListWorkersRequest) returns (ListWorkersResponse) {
-    option (google.api.http) = {
-      get : "/v1/workers"
-    };
-  }
-
-  rpc Intercom(IntercomRequest) returns (IntercomResponse) {}
+service MapReduceRPCService
+{
+	rpc AddTask(AddTaskRequest) returns (AddTaskResponse) {}
+	rpc ListWorkers(ListWorkersRequest) returns (ListWorkersResponse) {}
+	rpc Intercom(IntercomRequest) returns (IntercomResponse) {}
 }

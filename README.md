@@ -33,11 +33,6 @@ cd .. && make build
 ./mapreduce-worker-service --conf=conf/worker_2_conf.json --level=info
 # start the worker-3 service
 ./mapreduce-worker-service --conf=conf/worker_3_conf.json --level=info
-
-# add task
-curl -XPOST -d \
-    '{"task": {"inputs": ["/path/to/input-1.txt", "/path/to/input-2.txt", "/path/to/input-3.txt"]}}' \
-    http://localhost:18180/v1/task
 ```
 
 ## Documentation

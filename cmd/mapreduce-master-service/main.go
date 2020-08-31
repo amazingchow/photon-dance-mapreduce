@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"net"
-	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
@@ -12,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -104,48 +102,6 @@ GRPC_LOOP:
 	log.Info().Msg("stop grpc service")
 }
 
-func sereveHTTPService(ctx context.Context, mris *MapReduceIngressServer, conf *master.ServiceConfig, stopGroup *sync.WaitGroup, stopCh chan struct{}) {
-	stopGroup.Add(1)
-	defer stopGroup.Done()
-
-	mux := runtime.NewServeMux()
-	dialOpts := []grpc.DialOption{
-		grpc.WithInsecure(),
-	}
-	if err := pb.RegisterMapReduceRPCServiceHandlerFromEndpoint(ctx, mux, conf.GRPCEndpoint, dialOpts); err != nil {
-		log.Fatal().Err(err).Msg("failed to register http service")
-	}
-
-	http.Handle("/", mux)
-	httpServer := http.Server{
-		Addr: conf.HTTPEndpoint,
-	}
-
-	log.Info().Msgf("http service is listening at \x1b[1;31m%s\x1b[0m", conf.HTTPEndpoint)
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
-			log.Warn().Err(err)
-		}
-	}()
-
-HTTP_LOOP:
-	for { // nolint
-		select {
-		case _, ok := <-stopCh:
-			{
-				if !ok {
-					break HTTP_LOOP
-				}
-			}
-		}
-	}
-
-	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Warn().Err(err).Msg("failed to stop http service")
-	}
-	log.Info().Msg("stop http service")
-}
-
 func main() {
 	flag.Parse()
 
@@ -187,7 +143,6 @@ func main() {
 	}()
 
 	go serverGrpcService(ctx, mris, &conf, stopGroup, stopCh)
-	go sereveHTTPService(ctx, mris, &conf, stopGroup, stopCh)
 
 	// wait for exit signal
 	sigCh := make(chan os.Signal, 1)
