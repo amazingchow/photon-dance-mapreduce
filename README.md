@@ -59,10 +59,6 @@ cd .. && make build
 
 * 🔃 Create a new PR using https://github.com/amazingchow/photon-dance-mapreduce/compare!
 
-## FAQ
-
-* refer to [FAQ](FAQ.md).
-
 ## Support
 
 * Reach out to me at <jianzhou42@163.com>.
