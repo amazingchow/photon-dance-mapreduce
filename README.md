@@ -37,10 +37,6 @@ cd .. && make build
 
 ## Documentation
 
-### Api Design
-
-* refer to [swagger](pb/mapreduce.swagger.json).
-
 ## Reference
 
 * [MapReduce: Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf)

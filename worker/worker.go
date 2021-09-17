@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 
-	pb "github.com/amazingchow/photon-dance-mapreduce/api"
 	"github.com/amazingchow/photon-dance-mapreduce/backend/storage"
+	pb "github.com/amazingchow/photon-dance-mapreduce/pb/api"
 )
 
 type WorkerService struct {

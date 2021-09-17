@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package = "github.com/amazingchow/photon-dance-mapreduce/api";
-package amazingchow.photon_dance_mapreduce;
+option go_package = "api/";
+package github_com.amazingchow.photon_dance_mapreduce;
 
 enum WorkerStatus {
 	WORKER_STATUS_ONLINE = 0;

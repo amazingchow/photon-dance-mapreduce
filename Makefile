@@ -24,6 +24,9 @@ $(WORKER): $(SRC)
 lint:
 	@golangci-lint run --skip-dirs=api --deadline=5m
 
+pb-compile:
+	@docker run --rm -v `pwd`:/defs namely/protoc-all:1.37_0 -o pb -d pb -l go
+
 pb-fmt:
 	@clang-format -i ./pb/*.proto
 
@@ -36,4 +39,4 @@ test:
 clean:
 	rm -f $(ALL_TARGETS)
 
-.PHONY: all build clean
+.PHONY: all build lint pb-compile pb-fmt test clean

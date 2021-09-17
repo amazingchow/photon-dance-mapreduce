@@ -18,8 +18,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/amazingchow/photon-dance-mapreduce/api"
 	"github.com/amazingchow/photon-dance-mapreduce/master"
+	pb "github.com/amazingchow/photon-dance-mapreduce/pb/api"
 	"github.com/amazingchow/photon-dance-mapreduce/utils"
 )
 
