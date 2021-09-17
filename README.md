@@ -7,7 +7,7 @@
 ### Prerequisites
 
 * OS - debian/ubuntu linux release
-* Go - go1.12.7 linux/amd64 or higher
+* Go - go1.15+ linux/amd64 or higher
 
 ### Installation
 
