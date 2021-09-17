@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,8 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff"
-	minio "github.com/minio/minio-go"
+	minio "github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
 )
 
@@ -36,7 +38,10 @@ type S3Config struct {
 
 // NewS3Persister returns s3 persist service instance.
 func NewS3Persister(conf *S3Config) (*S3Persister, error) {
-	client, err := minio.New(conf.Endpoint, conf.AccessKeyID, conf.SecretAccessKeyID, conf.UseSSL)
+	client, err := minio.New(conf.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(conf.AccessKeyID, conf.SecretAccessKeyID, ""),
+		Secure: conf.UseSSL,
+	})
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create s3 client")
 		return nil, err
@@ -58,7 +63,10 @@ func NewS3Persister(conf *S3Config) (*S3Persister, error) {
 
 // Init inits s3 persist service.
 func (s *S3Persister) Init() error {
-	ok, err := s.client.BucketExists(s.conf.Bucket)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	ok, err := s.client.BucketExists(ctx, s.conf.Bucket)
 	if err != nil || !ok {
 		log.Error().Err(err).Msgf("bucket <%s> not exist", s.conf.Bucket)
 		return fmt.Errorf("bucket <%s> not exist", s.conf.Bucket)
@@ -127,12 +135,15 @@ func (s *S3Persister) Writable(file IndexFile) (string, error) {
 // Commit writes the index file right now.
 // Upload local index file to s3.
 func (s *S3Persister) Commit(file IndexFile) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
 	rPath := s.remotePath(file)
 	lPath := s.localPath(file)
 
 	retry := 0
 	operation := func() error {
-		n, err := s.client.FPutObject(s.conf.Bucket, rPath, lPath, minio.PutObjectOptions{})
+		n, err := s.client.FPutObject(ctx, s.conf.Bucket, rPath, lPath, minio.PutObjectOptions{})
 		if err != nil {
 			log.Warn().Err(err).Msgf("cannot write index file to s3, retry=%d, object=%s, file=%s, file size=%d, uploaded=%d",
 				retry, rPath, lPath, fileSize(lPath), n)
@@ -160,9 +171,12 @@ func (s *S3Persister) Commit(file IndexFile) (string, error) {
 // Readable checks whether the index file is readable right now or not.
 // Download remote index file at s3 to local.
 func (s *S3Persister) Readable(file IndexFile) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
 	rPath := s.remotePath(file)
 
-	obj, err := s.client.GetObject(s.conf.Bucket, rPath, minio.GetObjectOptions{})
+	obj, err := s.client.GetObject(ctx, s.conf.Bucket, rPath, minio.GetObjectOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -224,9 +238,12 @@ func (s *S3Persister) Abort(file IndexFile) error {
 
 // Delete deletes the remote index file right now.
 func (s *S3Persister) Delete(file IndexFile) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
 	rPath := s.remotePath(file)
 
-	if err := s.client.RemoveObject(s.conf.Bucket, rPath); err != nil {
+	if err := s.client.RemoveObject(ctx, s.conf.Bucket, rPath, minio.RemoveObjectOptions{}); err != nil {
 		log.Warn().Err(err).Msgf("cannot delete remote index file, object=%s", rPath)
 		return err
 	}
